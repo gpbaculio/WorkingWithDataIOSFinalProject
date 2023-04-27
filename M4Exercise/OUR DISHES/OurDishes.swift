@@ -8,7 +8,21 @@ struct OurDishes: View {
     @State private var showAlert = false
     @State var searchText = ""
     
+    func buildPredicate() -> NSPredicate {
+        if searchText.isEmpty {
+            return NSPredicate(value: true)
+        } else {
+            let predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchText)
+            return predicate
+        }
+    }
     
+    func buildSortDescriptors() -> [NSSortDescriptor] {
+        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedStandardCompare(_:)))
+        return [sortDescriptor]
+    }
+
+ 
     var body: some View {
         VStack {
             LittleLemonLogo()
@@ -38,7 +52,7 @@ struct OurDishes: View {
                             }
                         }
                         // add the search bar modifier here
-                    }
+                    }.searchable(text: $searchText, prompt: "search...")
             }
             
             // SwiftUI has this space between the title and the list

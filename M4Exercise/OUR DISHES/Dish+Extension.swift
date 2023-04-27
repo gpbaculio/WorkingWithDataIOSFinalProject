@@ -4,37 +4,30 @@ import CoreData
 
 extension Dish {
 
-    static func createDishesFrom(menuItems:[MenuItem],
-                                 _ context:NSManagedObjectContext) {
-        for menuItem in menuItems {
-                    guard !dishExists(withID: menuItem.id, in: context) else {
-                        continue // skip this menu item if a dish with the same ID already exists
-                    }
-                    
-                    let dish = Dish(context: context)
-                    dish.name = menuItem.title
-                    dish.price = Float(menuItem.price)
-                }
-                
-                do {
-                    try context.save()
-                } catch let error {
-                    print("Could not save dishes: \(error.localizedDescription)")
-                }
-        
-    }
-    static func dishExists(withID id: UUID, in context: NSManagedObjectContext) -> Bool {
-            let request: NSFetchRequest<Dish> = Dish.fetchRequest()
-            request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-            request.fetchLimit = 1
-            
+    class func createDishesFrom(menuItems: [MenuItem], context: NSManagedObjectContext) {
+        for item in menuItems {
+            let request = Dish.fetchRequest() as NSFetchRequest<Dish>
+            request.predicate = NSPredicate(format: "name == %@", item.title)
             do {
-                let count = try context.count(for: request)
-                return count > 0
+                let results = try context.fetch(request)
+                if let existingDish = results.first {
+                    // if the dish already exists, update its price
+                    existingDish.price = Float(item.price) ?? 0
+                } else {
+                    // if the dish doesn't exist, create a new one
+                    let newDish = Dish(context: context)
+                    newDish.name = item.title
+                    newDish.price = Float(item.price) ?? 0
+                }
             } catch {
-                print("Error checking if dish exists: \(error.localizedDescription)")
-                return false
+                print("Error fetching Dish objects: \(error)")
             }
         }
-    
+        
+        do {
+            try context.save()
+        } catch {
+            print("Error saving Dish objects: \(error)")
+        }
+    }
 }

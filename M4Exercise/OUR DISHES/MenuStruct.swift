@@ -1,15 +1,20 @@
 import Foundation
 
 struct JSONMenu: Codable {
-    // add code here
-    let menu:  [MenuItem]
+    let menu: [MenuItem]
+    
+    enum CodingKeys: String, CodingKey {
+        case menu = "menu"
+    }
 }
 
-
-struct MenuItem: Codable, Identifiable {
+struct MenuItem: Codable, Hashable, Identifiable {
     let id = UUID()
-    
-    // add code here
     let title: String
-    let price: Double
+    let price: String
+    
+    enum CodingKeys: String, CodingKey {
+        case title = "title"
+        case price = "price"
+    }
 }
