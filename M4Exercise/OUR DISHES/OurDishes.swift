@@ -29,7 +29,13 @@ struct OurDishes: View {
                     sortDescriptors: buildSortDescriptors()) {
                         (dishes: [Dish]) in
                         List {
-                            // Code for the list enumeration here
+                            ForEach(dishes, id: \.self) { dish in
+                                Button(action: {
+                                    showAlert.toggle()
+                                }, label: {
+                                    DisplayDish(dish)
+                                })
+                            }
                         }
                         // add the search bar modifier here
                     }

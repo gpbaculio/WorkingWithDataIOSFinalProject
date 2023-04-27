@@ -7,14 +7,31 @@ import SwiftUI
 
 
 struct DisplayDish: View {
-    @ObservedObject private var dish:Dish
-    init(_ dish:Dish) {
+    @ObservedObject private var dish: Dish
+    
+    init(_ dish: Dish) {
         self.dish = dish
     }
     
-    var body: some View {        
-        EmptyView()
-        .contentShape(Rectangle()) // keep this code
+    var body: some View {
+        VStack {
+            HStack {
+                Text(dish.name ?? "")
+                    .font(.headline)
+                Spacer()
+                Text(String(format: "$%.2f", dish.price))
+                    .font(.callout)
+                    .foregroundColor(.gray)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .frame(minWidth: 50, alignment: .trailing)
+            }
+            HStack {
+                Text(dish.size ?? "")
+                Spacer()
+            }
+        }
+        .padding(.horizontal)
+        .contentShape(Rectangle())
     }
 }
 
